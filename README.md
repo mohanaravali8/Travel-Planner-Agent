@@ -294,4 +294,4 @@ MIT License — free to use, modify, and distribute.
 
 ---
 
-*Built with ❤️ using IBM Watsonx.ai and IBM Granite models*
+*Built with by using IBM Watsonx.ai and IBM Granite models*
