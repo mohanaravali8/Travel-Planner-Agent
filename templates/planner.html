@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Trip Planner — Atlas Travel Planner{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <span class="section-label">AI-Powered</span>
+        <h1 class="page-title">Trip Planner</h1>
+        <p class="text-muted">Fill in your travel details and Atlas will generate a comprehensive, personalized itinerary powered by IBM Granite AI.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Planner Form -->
+        <div class="col-lg-7">
+            <div class="planner-card">
+                <div class="planner-card-header">
+                    <i class="bi bi-calendar3 me-2"></i>Plan Your Trip
+                </div>
+                <div class="planner-card-body">
+                    <form id="plannerForm">
+                        <!-- Destination -->
+                        <div class="form-group mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-geo-alt text-primary me-1"></i>Destination *
+                            </label>
+                            <div class="position-relative">
+                                <input type="text" class="form-control form-control-lg" id="planDestination"
+                                       placeholder="e.g., Paris, Tokyo, Bali, New York..." required
+                                       list="destSuggestions" />
+                                <datalist id="destSuggestions">
+                                    {% for dest in destinations %}
+                                    <option value="{{ dest.name }}, {{ dest.country }}">
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+
+                        <!-- Dates Row -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-calendar-event text-success me-1"></i>Start Date
+                                </label>
+                                <input type="date" class="form-control" id="planStartDate" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-calendar2-check text-info me-1"></i>Duration (days)
+                                </label>
+                                <select class="form-select" id="planDuration">
+                                    <option value="2">2 days (Weekend)</option>
+                                    <option value="3">3 days</option>
+                                    <option value="5">5 days</option>
+                                    <option value="7" selected>7 days (1 week)</option>
+                                    <option value="10">10 days</option>
+                                    <option value="14">14 days (2 weeks)</option>
+                                    <option value="21">21 days (3 weeks)</option>
+                                    <option value="30">30 days (1 month)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Budget & Group -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-cash-coin text-warning me-1"></i>Total Budget (USD)
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="planBudget"
+                                           placeholder="2000" min="100" value="2000" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-people text-purple me-1"></i>Group Size
+                                </label>
+                                <select class="form-select" id="planGroupSize">
+                                    <option value="1">Solo (1 person)</option>
+                                    <option value="2" selected>Couple (2 people)</option>
+                                    <option value="3">3 people</option>
+                                    <option value="4">Family of 4</option>
+                                    <option value="5">5 people</option>
+                                    <option value="6">6+ people (Group)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Travel Type -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-suitcase text-danger me-1"></i>Travel Style
+                            </label>
+                            <div class="travel-type-picker">
+                                {% for t in travel_types %}
+                                <label class="type-option">
+                                    <input type="radio" name="travelType" value="{{ t.id }}"
+                                           {% if t.id == 'cultural' %}checked{% endif %} />
+                                    <div class="type-option-card" style="--type-color: {{ t.color }}">
+                                        <span class="type-opt-icon">{{ t.icon }}</span>
+                                        <span class="type-opt-name">{{ t.name.split()[0] }}</span>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Interests -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-heart text-pink me-1"></i>Interests (select all that apply)
+                            </label>
+                            <div class="interests-grid">
+                                {% set interests = [
+                                    ("🏛️", "Museums & History"),
+                                    ("🍜", "Food & Cuisine"),
+                                    ("🏖️", "Beaches"),
+                                    ("🏔️", "Hiking & Nature"),
+                                    ("🛍️", "Shopping"),
+                                    ("🎭", "Arts & Culture"),
+                                    ("🌃", "Nightlife"),
+                                    ("🎢", "Theme Parks"),
+                                    ("🤿", "Water Sports"),
+                                    ("📸", "Photography"),
+                                    ("🏋️", "Wellness & Spa"),
+                                    ("⚽", "Sports Events"),
+                                ] %}
+                                {% for emoji, label in interests %}
+                                <label class="interest-chip">
+                                    <input type="checkbox" name="interests" value="{{ label }}" />
+                                    <span>{{ emoji }} {{ label }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Special Requirements -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-chat-text text-secondary me-1"></i>Special Requirements (optional)
+                            </label>
+                            <textarea class="form-control" id="planSpecial" rows="3"
+                                      placeholder="e.g., dietary restrictions, accessibility needs, must-see places, honeymoon, anniversary, kids ages..."></textarea>
+                        </div>
+
+                        <!-- Include Options -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="bi bi-check2-square text-success me-1"></i>Include in Plan
+                            </label>
+                            <div class="row g-2">
+                                {% set includes = [
+                                    ("incHotels", "Hotel Recommendations", True),
+                                    ("incFood", "Restaurant Suggestions", True),
+                                    ("incVisa", "Visa Information", True),
+                                    ("incPacking", "Packing Checklist", True),
+                                    ("incWeather", "Weather & Climate Tips", True),
+                                    ("incTransport", "Transport Options", True),
+                                ] %}
+                                {% for id, label, checked in includes %}
+                                <div class="col-6">
+                                    <div class="form-check include-check">
+                                        <input class="form-check-input" type="checkbox" id="{{ id }}"
+                                               {% if checked %}checked{% endif %} />
+                                        <label class="form-check-label" for="{{ id }}">{{ label }}</label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100" id="generateBtn">
+                            <i class="bi bi-robot me-2"></i>Generate My Itinerary with IBM Granite AI
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="col-lg-5">
+            <!-- Budget Preview Card -->
+            <div class="budget-preview-card mb-4" id="budgetPreview">
+                <div class="budget-header">
+                    <i class="bi bi-pie-chart me-2 text-primary"></i>Budget Estimate
+                </div>
+                <div class="budget-body" id="budgetBreakdown">
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-calculator fs-2 d-block mb-2 text-muted"></i>
+                        Fill in destination and details to see budget estimate
+                    </div>
+                </div>
+            </div>
+
+            <!-- Destination Quick Info -->
+            <div class="dest-quick-card mb-4" id="destQuickCard" style="display:none">
+                <div class="dest-quick-header" id="destQuickHeader"></div>
+                <div class="dest-quick-body" id="destQuickBody"></div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="tips-card">
+                <div class="tips-header">
+                    <i class="bi bi-lightbulb me-2 text-warning"></i>Planning Tips
+                </div>
+                <div class="tips-body">
+                    <div class="tip-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Book flights 6–8 weeks in advance for the best prices
+                    </div>
+                    <div class="tip-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Consider shoulder season (spring/fall) for fewer crowds
+                    </div>
+                    <div class="tip-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Always add 10–15% buffer to your budget
+                    </div>
+                    <div class="tip-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Check visa requirements at least 3 months before
+                    </div>
+                    <div class="tip-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Travel insurance is strongly recommended
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generated Itinerary Output -->
+    <div class="itinerary-output mt-5" id="itineraryOutput" style="display:none">
+        <div class="itinerary-output-header">
+            <h3 class="fw-bold">
+                <i class="bi bi-map me-2 text-primary"></i>
+                Your Personalized Itinerary
+            </h3>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary btn-sm" onclick="copyItinerary()">
+                    <i class="bi bi-copy me-1"></i>Copy
+                </button>
+                <button class="btn btn-outline-primary btn-sm" onclick="downloadItinerary()">
+                    <i class="bi bi-download me-1"></i>Download
+                </button>
+                <a href="/chat" class="btn btn-primary btn-sm" id="refineCTA">
+                    <i class="bi bi-chat-dots me-1"></i>Refine with AI
+                </a>
+            </div>
+        </div>
+        <div class="itinerary-content" id="itineraryContent"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/planner.js') }}"></script>
+<script>
+// Expose destination data to JS for quick-info card
+window._destData = {{ destinations | tojson | safe }};
+</script>
+{% endblock %}

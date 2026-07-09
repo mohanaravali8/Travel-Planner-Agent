@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Destinations — Atlas Travel Planner{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- Page Header -->
+    <div class="page-header mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="section-label">{{ stats.destinations_available }} Destinations</span>
+                <h1 class="page-title">Explore the World</h1>
+                <p class="text-muted">Discover curated destinations across {{ stats.countries_covered }} countries, with AI-powered recommendations tailored to your style and budget.</p>
+            </div>
+            <div class="col-lg-5">
+                <!-- Quick Stats -->
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <div class="stat-card-num">{{ stats.destinations_available }}</div>
+                            <div class="stat-card-label">Featured Destinations</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <div class="stat-card-num">{{ stats.countries_covered }}</div>
+                            <div class="stat-card-label">Countries Covered</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <div class="stat-card-num">{{ stats.travel_types }}</div>
+                            <div class="stat-card-label">Travel Styles</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card stat-card-highlight">
+                            <div class="stat-card-num">{{ stats.avg_savings_percent }}%</div>
+                            <div class="stat-card-label">Avg. Cost Savings with AI</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Weather Widget Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <!-- Filters -->
+            <div class="filter-bar d-flex flex-wrap gap-2 align-items-center">
+                <span class="filter-label"><i class="bi bi-funnel me-1"></i>Filter:</span>
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="Europe">Europe</button>
+                <button class="filter-btn" data-filter="Asia">Asia</button>
+                <button class="filter-btn" data-filter="Americas">Americas</button>
+                <button class="filter-btn" data-filter="Middle East">Middle East</button>
+                <button class="filter-btn" data-filter="Africa">Africa</button>
+                <div class="ms-auto">
+                    <select class="form-select form-select-sm" id="budgetFilter">
+                        <option value="">All Budgets</option>
+                        <option value="budget">Budget</option>
+                        <option value="mid-range">Mid-Range</option>
+                        <option value="luxury">Luxury</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <!-- Weather Widget -->
+            <div class="weather-widget" id="weatherWidget">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-cloud-sun fs-5 text-warning"></i>
+                    <span class="fw-semibold">Live Weather</span>
+                </div>
+                <div class="input-group input-group-sm mb-2">
+                    <input type="text" class="form-control" id="weatherCity" placeholder="Enter city..." value="Paris" />
+                    <button class="btn btn-primary" onclick="loadWeather()">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                <div id="weatherResult" class="weather-result">
+                    <div class="text-muted small">Enter a city to see weather...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trending Row -->
+    <div class="trending-bar mb-4">
+        <span class="trending-label"><i class="bi bi-graph-up-arrow text-danger me-1"></i>Trending:</span>
+        {% for t in stats.trending_destinations %}
+        <a href="/chat?dest={{ t.name }}" class="trending-chip">
+            {{ t.name }} <span class="trend-val text-success">{{ t.trend }}</span>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Destination Grid -->
+    <div class="row g-4" id="destinationGrid">
+        {% for dest in destinations %}
+        <div class="col-md-6 col-lg-4 dest-item" data-region="{{ dest.region }}" data-budget="{{ dest.budget_level }}" data-types="{{ dest.types | join(',') }}">
+            <div class="destination-card h-100">
+                <div class="dest-image-container">
+                    <img src="{{ dest.image_url }}" alt="{{ dest.name }}" class="dest-image" loading="lazy"
+                         onerror="this.src='https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80'" />
+                    <div class="dest-overlay">
+                        <a href="/chat?dest={{ dest.name }}" class="btn btn-light btn-sm me-2">
+                            <i class="bi bi-robot me-1"></i>AI Plan
+                        </a>
+                        <button class="btn btn-outline-light btn-sm" onclick="showDestDetail({{ dest | tojson | safe }})">
+                            <i class="bi bi-info-circle"></i> Details
+                        </button>
+                    </div>
+                    <div class="dest-badges">
+                        <span class="dest-badge-region">{{ dest.region }}</span>
+                        <span class="dest-badge-budget dest-badge-{{ dest.budget_level }}">{{ dest.budget_level | title }}</span>
+                    </div>
+                    <div class="dest-rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        {{ dest.rating }}
+                    </div>
+                </div>
+                <div class="dest-body">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h5 class="dest-name mb-0">{{ dest.emoji }} {{ dest.name }}</h5>
+                        <span class="dest-country">{{ dest.country }}</span>
+                    </div>
+                    <p class="dest-tagline">{{ dest.tagline }}</p>
+                    <p class="dest-description">{{ dest.description }}</p>
+                    <div class="dest-highlights mb-3">
+                        {% for h in dest.highlights[:3] %}
+                        <span class="highlight-tag">{{ h }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="dest-meta">
+                        <div class="d-flex align-items-center gap-2 small text-muted mb-1">
+                            <i class="bi bi-translate"></i> {{ dest.language }}
+                            <span>•</span>
+                            <i class="bi bi-currency-exchange"></i> {{ dest.currency }}
+                        </div>
+                        <div class="d-flex align-items-center gap-2 small text-muted">
+                            <i class="bi bi-calendar-check text-success"></i>
+                            Best: {{ dest.best_season }}
+                        </div>
+                    </div>
+                    <div class="dest-footer mt-3">
+                        <div class="dest-safety">
+                            <i class="bi bi-shield-check text-success"></i>
+                            {{ dest.safety }}
+                        </div>
+                        <a href="/chat?dest={{ dest.name }}" class="btn btn-primary btn-sm">
+                            Plan Trip <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Popular Regions -->
+    <div class="row g-3 mt-5">
+        <div class="col-12">
+            <h4 class="fw-bold mb-3">Popular Regions</h4>
+        </div>
+        {% for region in stats.popular_regions %}
+        <div class="col-6 col-md-4 col-lg-auto flex-lg-fill">
+            <button class="region-card filter-btn w-100" data-filter="{{ region.name }}">
+                <span class="region-icon">{{ region.icon }}</span>
+                <span class="region-name">{{ region.name }}</span>
+                <span class="region-count">{{ region.destinations }} destinations</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- Destination Detail Modal -->
+<div class="modal fade" id="destModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content atlas-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="destModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="destModalBody"></div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" id="destModalCTA" class="btn btn-primary">
+                    <i class="bi bi-robot me-1"></i>Plan with AI
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

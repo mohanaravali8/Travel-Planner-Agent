@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Login - Atlas Travel Planner{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="auth-card">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <div class="brand-icon fs-1 mb-2">✈️</div>
+                <h2 class="auth-title">Welcome back</h2>
+                <p class="auth-subtitle">Sign in to continue planning your next adventure.</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} rounded-3">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="post" class="auth-form">
+                <input type="hidden" name="next" value="{{ next_url or '' }}">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Log In</button>
+            </form>
+
+            <div class="text-center mt-4">
+                <span class="text-muted">New here?</span>
+                <a href="/register" class="auth-link ms-1">Create an account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

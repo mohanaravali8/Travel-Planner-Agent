@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Atlas — AI Travel Planner{% endblock %}</title>
+    <meta name="description" content="Atlas: Your AI-powered travel planning companion powered by IBM Watsonx.ai and IBM Granite models." />
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ── Navigation ──────────────────────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg atlas-navbar sticky-top" id="mainNav">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <div class="brand-icon">✈️</div>
+            <div>
+                <span class="brand-name">Atlas</span>
+                <span class="brand-sub d-none d-md-inline"> Travel Planner</span>
+            </div>
+        </a>
+
+        <!-- Mobile toggler -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+
+        <!-- Nav Links -->
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav mx-auto gap-1">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
+                        <i class="bi bi-house me-1"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/dashboard' %}active{% endif %}" href="/dashboard">
+                        <i class="bi bi-compass me-1"></i>Explore
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/planner' %}active{% endif %}" href="/planner">
+                        <i class="bi bi-calendar3 me-1"></i>Planner
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/chat' %}active{% endif %}" href="/chat">
+                        <i class="bi bi-chat-dots me-1"></i>AI Chat
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Right controls -->
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-icon" id="themeToggle" title="Toggle dark mode">
+                    <i class="bi bi-moon-stars" id="themeIcon"></i>
+                </button>
+                {% if current_user %}
+                    <a href="/chat" class="btn btn-primary btn-sm px-3 d-none d-lg-flex align-items-center gap-1">
+                        <i class="bi bi-robot"></i> Ask AI
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="user-avatar">{{ current_user.avatar }}</span>
+                            <span class="d-none d-md-inline">{{ current_user.name.split(' ')[0] }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header">{{ current_user.name }}</h6></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="/login" class="btn btn-outline-secondary btn-sm">Login</a>
+                    <a href="/register" class="btn btn-primary btn-sm">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ── Main Content ─────────────────────────────────────────────────────────── -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- ── Footer ───────────────────────────────────────────────────────────────── -->
+<footer class="atlas-footer mt-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="fs-4">✈️</span>
+                    <div>
+                        <div class="fw-bold text-white">Atlas Travel Planner</div>
+                        <div class="small text-muted">Powered by IBM Watsonx.ai</div>
+                    </div>
+                </div>
+                <p class="text-muted small">Your AI-powered travel companion crafting personalized journeys using IBM Granite models. Plan smarter, travel better.</p>
+                <div class="d-flex gap-2 mt-3">
+                    <span class="badge bg-primary-subtle text-primary">IBM Granite</span>
+                    <span class="badge bg-success-subtle text-success">Watsonx.ai</span>
+                    <span class="badge bg-warning-subtle text-warning">Cloud Lite</span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="text-white mb-3">Explore</h6>
+                <ul class="list-unstyled">
+                    <li><a href="/" class="footer-link">Home</a></li>
+                    <li><a href="/dashboard" class="footer-link">Destinations</a></li>
+                    <li><a href="/planner" class="footer-link">Planner</a></li>
+                    <li><a href="/chat" class="footer-link">AI Chat</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="text-white mb-3">Travel Types</h6>
+                <ul class="list-unstyled">
+                    <li><a href="/chat" class="footer-link">Family Travel</a></li>
+                    <li><a href="/chat" class="footer-link">Adventure</a></li>
+                    <li><a href="/chat" class="footer-link">Luxury</a></li>
+                    <li><a href="/chat" class="footer-link">Budget</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4">
+                <h6 class="text-white mb-3">Quick AI Query</h6>
+                <div class="footer-chat-box">
+                    <form onsubmit="footerQuickChat(event)">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" id="footerQuery"
+                                   placeholder="Where do you want to go?" />
+                            <button class="btn btn-primary btn-sm" type="submit">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="small text-muted mt-2">Ask anything about travel destinations, costs, or tips.</div>
+                </div>
+            </div>
+        </div>
+        <hr class="border-secondary mt-4" />
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 pb-3">
+            <div class="small text-muted">© 2024 Atlas Travel Planner. Built with IBM Watsonx.ai &amp; IBM Granite.</div>
+            <div class="d-flex gap-3">
+                <a href="/api/health" class="footer-link small" target="_blank">
+                    <i class="bi bi-activity me-1"></i>API Health
+                </a>
+                <span class="small text-muted">|</span>
+                <span class="small text-muted">IBM Cloud Lite</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+<!-- Custom JS -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+
+<script>
+function footerQuickChat(e) {
+    e.preventDefault();
+    const q = document.getElementById('footerQuery').value.trim();
+    if (q) window.location.href = '/chat?q=' + encodeURIComponent(q);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}AI Chat — Atlas Travel Planner{% endblock %}
+
+{% block extra_css %}
+<style>
+    body { overflow: hidden; }
+    main { height: calc(100vh - 70px); }
+    footer { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-layout">
+    <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
+    <aside class="chat-sidebar" id="chatSidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <div class="sidebar-ai-avatar">✈️</div>
+                <div>
+                    <div class="fw-semibold">{{ persona.name }}</div>
+                    <div class="small text-muted">{{ persona.tagline }}</div>
+                </div>
+            </div>
+            <button class="btn btn-icon d-lg-none" id="closeSidebar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Quick Prompts</div>
+            <div class="quick-prompts-list">
+                {% for prompt in quick_prompts %}
+                <button class="quick-prompt-btn" onclick="useQuickPrompt(this)">
+                    <i class="bi bi-lightning-charge-fill text-warning me-2"></i>
+                    {{ prompt }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Plan By Type</div>
+            <div class="d-flex flex-wrap gap-2">
+                <button class="type-chip" onclick="planByType('Family Travel')">👨‍👩‍👧‍👦 Family</button>
+                <button class="type-chip" onclick="planByType('Solo Travel')">🧳 Solo</button>
+                <button class="type-chip" onclick="planByType('Romantic Getaway')">💑 Romantic</button>
+                <button class="type-chip" onclick="planByType('Adventure Travel')">🧗 Adventure</button>
+                <button class="type-chip" onclick="planByType('Budget Travel')">💰 Budget</button>
+                <button class="type-chip" onclick="planByType('Luxury Travel')">✨ Luxury</button>
+                <button class="type-chip" onclick="planByType('Business Travel')">💼 Business</button>
+                <button class="type-chip" onclick="planByType('Weekend Getaway')">🏃 Weekend</button>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="btn btn-outline-danger btn-sm w-100" onclick="clearChat()">
+                <i class="bi bi-trash me-1"></i>Clear Conversation
+            </button>
+            <div class="powered-badge mt-2 text-center">
+                <small class="text-muted">Powered by</small>
+                <div class="d-flex justify-content-center align-items-center gap-1 mt-1">
+                    <span class="badge bg-blue-subtle text-primary">IBM Watsonx.ai</span>
+                    <span class="badge bg-purple-subtle text-purple">Granite</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ── Chat Main ───────────────────────────────────────────────────────── -->
+    <div class="chat-main">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <button class="btn btn-icon d-lg-none" id="openSidebar">
+                <i class="bi bi-layout-sidebar"></i>
+            </button>
+            <div class="d-flex align-items-center gap-3">
+                <div class="chat-header-avatar">✈️</div>
+                <div>
+                    <div class="fw-semibold">{{ persona.name }} — AI Travel Planner</div>
+                    <div class="small d-flex align-items-center gap-1">
+                        <span class="pulse-dot"></span>
+                        <span class="text-success" id="aiStatus">IBM Granite · Ready to plan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header-actions ms-auto d-flex gap-2">
+                <button class="btn btn-icon" onclick="downloadChat()" title="Download conversation">
+                    <i class="bi bi-download"></i>
+                </button>
+                <a href="/planner" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-calendar3 me-1"></i>Trip Planner
+                </a>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="chat-messages" id="chatMessages">
+            <!-- Welcome Message -->
+            <div class="message-row ai" id="welcomeMsg">
+                <div class="msg-avatar">✈️</div>
+                <div class="msg-bubble ai-bubble">
+                    <div class="msg-content" id="welcomeContent">
+                        <p>👋 Hello! I'm <strong>{{ persona.name }}</strong>, {{ persona.tagline }}.</p>
+                        <p>I'm powered by <strong>IBM Granite AI</strong> through IBM Watsonx.ai. I can help you with:</p>
+                        <ul class="mb-2">
+                            <li>📍 <strong>Personalized Itineraries</strong> — Day-by-day plans for any destination</li>
+                            <li>💰 <strong>Budget Planning</strong> — Itemized cost estimates</li>
+                            <li>🏨 <strong>Hotel Recommendations</strong> — All budget tiers</li>
+                            <li>🌤️ <strong>Weather & Packing</strong> — Climate-based checklists</li>
+                            <li>📋 <strong>Visa & Advisories</strong> — Entry requirements</li>
+                            <li>🍜 <strong>Food & Culture</strong> — Local cuisine guides</li>
+                        </ul>
+                        <p class="mb-0"><strong>Where would you like to go?</strong> Tell me your destination, budget, dates, and travel style! 🌍</p>
+                    </div>
+                    <div class="msg-time">{{ persona.name }} · AI Travel Companion</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggestion Chips -->
+        <div class="suggestion-chips-bar" id="suggestionBar">
+            <div class="chips-scroll">
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">✈️ Plan Paris trip for 2</button>
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">🏖️ Beach vacation under $2,000</button>
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">🗾 Tokyo 7-day itinerary</button>
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">🦁 Africa safari planning</button>
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">💰 Budget Europe backpacking</button>
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">🧳 Solo travel tips</button>
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">📋 Visa requirements Japan</button>
+                <button class="suggestion-chip" onclick="sendSuggestion(this)">🌴 Bali honeymoon ideas</button>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <div class="chat-input-container">
+                <div class="input-actions-top d-flex gap-2 mb-2" id="inputActions">
+                    <button class="action-btn" onclick="insertTemplate('itinerary')" title="Itinerary template">
+                        <i class="bi bi-calendar3"></i> Itinerary
+                    </button>
+                    <button class="action-btn" onclick="insertTemplate('budget')" title="Budget template">
+                        <i class="bi bi-cash-coin"></i> Budget
+                    </button>
+                    <button class="action-btn" onclick="insertTemplate('packing')" title="Packing list">
+                        <i class="bi bi-bag-check"></i> Packing
+                    </button>
+                    <button class="action-btn" onclick="insertTemplate('visa')" title="Visa info">
+                        <i class="bi bi-passport"></i> Visa
+                    </button>
+                </div>
+                <div class="d-flex gap-2 align-items-end">
+                    <div class="flex-grow-1 position-relative">
+                        <textarea class="chat-textarea" id="userInput"
+                            placeholder="Ask Atlas anything — 'Plan a 7-day trip to Japan for $3,000' or 'Best beaches in Southeast Asia'..."
+                            rows="1"
+                            onkeydown="handleKeyDown(event)"
+                            oninput="autoResize(this)"></textarea>
+                        <div class="char-counter" id="charCounter">0 / 500</div>
+                    </div>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+                <div class="input-footer d-flex justify-content-between align-items-center mt-2">
+                    <div class="small text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Press Enter to send · Shift+Enter for new line
+                    </div>
+                    <div class="model-badge">
+                        <i class="bi bi-cpu me-1"></i>IBM Granite 3
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script>
+// Auto-fill query from URL parameter
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const q    = params.get('q');
+    const dest = params.get('dest');
+    const type = params.get('type');
+
+    if (q) {
+        document.getElementById('userInput').value = q;
+        autoResize(document.getElementById('userInput'));
+        setTimeout(() => sendMessage(), 800);
+    } else if (dest) {
+        const msg = `Plan a detailed trip to ${dest}. Give me a 7-day itinerary with budget breakdown, hotel recommendations, and must-see attractions.`;
+        document.getElementById('userInput').value = msg;
+        autoResize(document.getElementById('userInput'));
+        setTimeout(() => sendMessage(), 800);
+    } else if (type) {
+        const msg = `I'm interested in ${type.replace('-', ' ')} travel. What are the best destinations and tips for this travel style?`;
+        document.getElementById('userInput').value = msg;
+        autoResize(document.getElementById('userInput'));
+        setTimeout(() => sendMessage(), 800);
+    }
+});
+</script>
+{% endblock %}

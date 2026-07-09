@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Atlas — AI-Powered Travel Planner{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero Section ──────────────────────────────────────────────────────── -->
+<section class="hero-section position-relative overflow-hidden">
+    <div class="hero-bg-animation"></div>
+    <div class="container position-relative z-1">
+        <div class="row align-items-center min-vh-90 py-5">
+            <div class="col-lg-6 text-center text-lg-start">
+                <div class="hero-badge mb-3 animate-fade-in">
+                    <i class="bi bi-stars me-2"></i>Powered by IBM Granite AI
+                </div>
+                <h1 class="hero-title animate-slide-up">
+                    Your AI Travel<br/>
+                    <span class="text-gradient">Companion</span><br/>
+                    <span class="hero-sub-text">Plans Everything</span>
+                </h1>
+                <p class="hero-description animate-fade-in-delay">
+                    Atlas creates personalized itineraries, budget plans, hotel suggestions,
+                    and destination guides powered by IBM Watsonx.ai and IBM Granite models.
+                    From weekend getaways to world tours — we plan it all.
+                </p>
+                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start animate-fade-in-delay-2">
+                    <a href="/chat" class="btn btn-hero-primary btn-lg">
+                        <i class="bi bi-robot me-2"></i>Start Planning with AI
+                    </a>
+                    <a href="/planner" class="btn btn-hero-secondary btn-lg">
+                        <i class="bi bi-calendar3 me-2"></i>Plan My Trip
+                    </a>
+                </div>
+                <!-- Stats Row -->
+                <div class="hero-stats d-flex gap-4 mt-5 justify-content-center justify-content-lg-start">
+                    <div class="stat-item">
+                        <div class="stat-num">195</div>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-num">12+</div>
+                        <div class="stat-label">Destinations</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-num">AI</div>
+                        <div class="stat-label">Granite Powered</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <!-- Floating Chat Preview Card -->
+                <div class="hero-chat-card animate-float">
+                    <div class="chat-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="ai-avatar">✈️</div>
+                            <div>
+                                <div class="fw-semibold">Atlas</div>
+                                <div class="small text-success d-flex align-items-center gap-1">
+                                    <span class="pulse-dot"></span> Online
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                    </div>
+                    <div class="chat-card-body">
+                        <div class="chat-bubble ai">
+                            <p class="mb-1">👋 Hello! I'm <strong>Atlas</strong>, your AI travel companion!</p>
+                            <p class="mb-0 small">Where would you like to explore today?</p>
+                        </div>
+                        <div class="chat-bubble user">
+                            Plan a 7-day trip to Bali for 2 people, $2,000 budget 🌴
+                        </div>
+                        <div class="chat-bubble ai">
+                            <p class="mb-1">✨ <strong>Perfect choice!</strong> Here's your Bali itinerary:</p>
+                            <p class="mb-1">📅 <strong>Day 1–2:</strong> Seminyak — Beach clubs &amp; sunset</p>
+                            <p class="mb-1">📅 <strong>Day 3–4:</strong> Ubud — Rice terraces &amp; culture</p>
+                            <p class="mb-0">📅 <strong>Day 5–7:</strong> Uluwatu — Temples &amp; surfing</p>
+                        </div>
+                        <div class="chat-typing">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="chat-card-footer">
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" class="form-control form-control-sm" placeholder="Ask me anything about travel..." readonly />
+                            <a href="/chat" class="btn btn-primary btn-sm">
+                                <i class="bi bi-send"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Badges -->
+                <div class="floating-badge badge-1 animate-float-delay">
+                    <i class="bi bi-shield-check text-success"></i>
+                    <span>Visa Info Included</span>
+                </div>
+                <div class="floating-badge badge-2 animate-float-delay-2">
+                    <i class="bi bi-currency-dollar text-warning"></i>
+                    <span>Budget Optimized</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Features Strip ─────────────────────────────────────────────────────── -->
+<section class="features-strip py-4">
+    <div class="container">
+        <div class="row g-3 text-center">
+            {% set features = [
+                ("bi-map", "Personalized Itineraries", "#3b82d4"),
+                ("bi-cash-coin", "Budget Calculator", "#10b981"),
+                ("bi-cloud-sun", "Weather Forecasts", "#f59e0b"),
+                ("bi-building", "Hotel Finder", "#8b5cf6"),
+                ("bi-airplane", "Transport Planner", "#ef4444"),
+                ("bi-clipboard-check", "Packing Lists", "#06b6d4"),
+                ("bi-shield-check", "Visa Advisor", "#84cc16"),
+                ("bi-geo-alt", "Map Integration", "#f97316")
+            ] %}
+            {% for icon, label, color in features %}
+            <div class="col-6 col-md-3 col-lg-auto flex-lg-fill">
+                <div class="feature-chip">
+                    <i class="bi {{ icon }}" style="color:{{ color }}"></i>
+                    <span>{{ label }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── Travel Types ───────────────────────────────────────────────────────── -->
+<section class="section py-5" id="travel-types">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-label">Choose Your Style</span>
+            <h2 class="section-title">How Do You Like to Travel?</h2>
+            <p class="section-desc">Atlas specializes in every travel style — tell us yours and we'll craft the perfect experience.</p>
+        </div>
+        <div class="row g-3">
+            {% for travel_type in travel_types %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="/chat?type={{ travel_type.id }}" class="travel-type-card text-decoration-none" style="--card-color: {{ travel_type.color }}">
+                    <div class="type-icon">{{ travel_type.icon }}</div>
+                    <div class="type-name">{{ travel_type.name }}</div>
+                    <div class="type-desc">{{ travel_type.desc }}</div>
+                    <div class="type-arrow"><i class="bi bi-arrow-right"></i></div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── Featured Destinations ─────────────────────────────────────────────── -->
+<section class="section py-5 bg-surface" id="destinations">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-end mb-5 flex-wrap gap-3">
+            <div>
+                <span class="section-label">Curated Picks</span>
+                <h2 class="section-title mb-0">Featured Destinations</h2>
+            </div>
+            <a href="/dashboard" class="btn btn-outline-primary">
+                View All <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="row g-4">
+            {% for dest in destinations %}
+            <div class="col-md-6 col-lg-4">
+                <div class="destination-card" data-dest-id="{{ dest.id }}">
+                    <div class="dest-image-container">
+                        <img src="{{ dest.image_url }}" alt="{{ dest.name }}" class="dest-image" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80'" />
+                        <div class="dest-overlay">
+                            <a href="/chat?dest={{ dest.name }}" class="btn btn-light btn-sm">
+                                <i class="bi bi-robot me-1"></i>Plan with AI
+                            </a>
+                        </div>
+                        <div class="dest-badges">
+                            <span class="dest-badge-region">{{ dest.region }}</span>
+                            <span class="dest-badge-budget dest-badge-{{ dest.budget_level }}">{{ dest.budget_level | title }}</span>
+                        </div>
+                        <div class="dest-rating">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            {{ dest.rating }}
+                        </div>
+                    </div>
+                    <div class="dest-body">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h5 class="dest-name mb-0">{{ dest.emoji }} {{ dest.name }}</h5>
+                            <span class="dest-country">{{ dest.country }}</span>
+                        </div>
+                        <p class="dest-tagline">{{ dest.tagline }}</p>
+                        <div class="dest-highlights">
+                            {% for h in dest.highlights[:3] %}
+                            <span class="highlight-tag">{{ h }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="dest-footer">
+                            <div class="dest-season">
+                                <i class="bi bi-calendar-check text-success"></i>
+                                {{ dest.best_season }}
+                            </div>
+                            <a href="/chat?dest={{ dest.name }}" class="btn btn-primary btn-sm">
+                                Plan Trip <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── How It Works ───────────────────────────────────────────────────────── -->
+<section class="section py-5" id="how-it-works">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-label">Simple Process</span>
+            <h2 class="section-title">How Atlas Plans Your Trip</h2>
+        </div>
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6 order-lg-2">
+                <div class="how-it-works-visual">
+                    <div class="step-flow">
+                        {% set steps = [
+                            ("1", "bi-chat-text", "Tell Atlas", "Describe your destination, dates, budget, and travel style in natural language.", "#3b82d4"),
+                            ("2", "bi-cpu", "AI Processing", "IBM Granite analyzes thousands of data points to craft your perfect itinerary.", "#8b5cf6"),
+                            ("3", "bi-map", "Get Your Plan", "Receive a detailed, personalized itinerary with costs, hotels, and tips.", "#10b981"),
+                            ("4", "bi-airplane-fill", "Travel Happy", "Follow your AI-optimized plan for a seamless, unforgettable journey.", "#f59e0b"),
+                        ] %}
+                        {% for num, icon, title, desc, color in steps %}
+                        <div class="step-item">
+                            <div class="step-number" style="background: {{ color }}20; color: {{ color }}; border-color: {{ color }}30">{{ num }}</div>
+                            <div class="step-icon" style="color: {{ color }}"><i class="bi {{ icon }}"></i></div>
+                            <div class="step-content">
+                                <div class="step-title">{{ title }}</div>
+                                <div class="step-desc">{{ desc }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <span class="section-label">Powered by IBM AI</span>
+                <h3 class="fw-bold mb-3">Intelligent Travel Planning<br/>in Seconds</h3>
+                <p class="text-muted mb-4">Atlas uses IBM Granite models through IBM Watsonx.ai to generate hyper-personalized travel plans that consider your budget, interests, group composition, and travel style.</p>
+                <div class="feature-list">
+                    {% set feats = [
+                        ("bi-check-circle-fill text-success", "Day-by-day itinerary with time-optimized schedules"),
+                        ("bi-check-circle-fill text-success", "Real-time budget calculations in your currency"),
+                        ("bi-check-circle-fill text-success", "Hotel recommendations across all budget tiers"),
+                        ("bi-check-circle-fill text-success", "Visa requirements and travel advisory warnings"),
+                        ("bi-check-circle-fill text-success", "Packing lists based on climate and activities"),
+                        ("bi-check-circle-fill text-success", "Local food recommendations and restaurant picks"),
+                    ] %}
+                    {% for icon_cls, text in feats %}
+                    <div class="feature-list-item">
+                        <i class="bi {{ icon_cls }}"></i>
+                        <span>{{ text }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="/chat" class="btn btn-primary mt-4">
+                    <i class="bi bi-robot me-2"></i>Start Planning Free
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA Banner ─────────────────────────────────────────────────────────── -->
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="cta-card text-center">
+            <div class="cta-icon mb-3">🌍</div>
+            <h2 class="cta-title">Ready to Plan Your Dream Trip?</h2>
+            <p class="cta-desc">Ask Atlas anything — destinations, budgets, itineraries, visa info, packing lists, and more.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+                <a href="/chat" class="btn btn-light btn-lg px-5">
+                    <i class="bi bi-robot me-2"></i>Chat with Atlas
+                </a>
+                <a href="/planner" class="btn btn-outline-light btn-lg px-5">
+                    <i class="bi bi-calendar3 me-2"></i>Use the Planner
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
