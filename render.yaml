@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: travel-planner-agent
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 2 --timeout 120 app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.14
+      - key: FLASK_DEBUG
+        value: "False"
+      - key: FLASK_SECRET_KEY
+        generateValue: true
